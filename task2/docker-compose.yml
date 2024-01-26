@@ -5,6 +5,11 @@ services:
     image: postgres:13.3
     container_name: webpegas_pg
     env_file: .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 
 
@@ -17,9 +22,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./alembic:/test_task_for_webpegas/alembic
       - ./src:/test_task_for_webpegas/src
-
-
